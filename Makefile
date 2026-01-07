@@ -15,7 +15,7 @@ else
 APP_NAME ?= $(shell basename $(CURDIR))
 # Use current timestamp as version number
 TIMESTAMP := $(shell date +%Y%m%d_%H%M%S)
-APP_VERSION ?= dev_$(TIMESTAMP)
+APP_VERSION ?= dev_$(TIMESTAMP)_retry_safemode_timeout
 
 ifeq ($(VARIANT),berry)
 OBK_VARIANT = 1

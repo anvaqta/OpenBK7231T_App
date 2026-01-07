@@ -661,7 +661,27 @@ static commandResult_t CMD_SafeMode(const void* context, const char* cmd, const 
 	return CMD_RES_OK;
 }
 
+static commandResult_t CMD_SafeModeTimeout(const void *context, const char *cmd,
+                                           const char *args, int cmdFlags) {
+  int timeout;
 
+  Tokenizer_TokenizeString(args, 0);
+
+  if (Tokenizer_GetArgsCount() == 0) {
+    // No argument provided, return current value
+    ADDLOG_INFO(LOG_FEATURE_CMD, "SafeModeTimeout: %i",
+                CFG_GetSafeModeTimeout());
+    return CMD_RES_OK;
+  }
+
+  timeout = Tokenizer_GetArgInteger(0);
+  CFG_SetSafeModeTimeout(timeout);
+  CFG_Save_IfThereArePendingChanges();
+
+  ADDLOG_INFO(LOG_FEATURE_CMD, "SafeModeTimeout set to %i", timeout);
+
+  return CMD_RES_OK;
+}
 
 void CMD_UARTConsole_Init() {
 #if PLATFORM_BEKEN
@@ -1072,6 +1092,13 @@ void CMD_Init_Early() {
 	//cmddetail:"fn":"CMD_SafeMode","file":"cmnds/cmd_main.c","requires":"",
 	//cmddetail:"examples":""}
 	CMD_RegisterCommand("SafeMode", CMD_SafeMode, NULL);
+	// cmddetail:{"name":"SafeModeTimeout","args":"[TimeoutInSeconds]",
+	// cmddetail:"descr":"Sets or gets the safe mode timeout value. If no
+	// argument is provided, returns the current timeout value. If an
+	// argument is provided, sets the timeout to that value.",
+	// cmddetail:"fn":"CMD_SafeModeTimeout","file":"cmnds/cmd_main.c","requires":"",
+	// cmddetail:"examples":""}
+	CMD_RegisterCommand("SafeModeTimeout", CMD_SafeModeTimeout, NULL);
 #if ENABLE_PING_WATCHDOG
 	//cmddetail:{"name":"PingInterval","args":"[IntegerSeconds]",
 	//cmddetail:"descr":"Sets the interval between ping attempts for ping watchdog mechanism",

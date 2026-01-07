@@ -1364,6 +1364,8 @@ typedef struct cfgPowerMeasurementCalibration_s {
 #define CFG_DEFAULT_BTN_SHORT	3
 #define CFG_DEFAULT_BTN_LONG	10
 #define CFG_DEFAULT_BTN_REPEAT	5
+// safe mode timeout in seconds (0 means disabled)
+#define CFG_DEFAULT_SAFE_MODE_TIMEOUT	0
 
 enum {
 	CFG_OBK_VOLTAGE = 0,
@@ -1492,6 +1494,7 @@ typedef struct mainConfig_s {
 	// offset 0x000004BC
 	unsigned long LFS_Size; // szie of LFS volume.  it's aligned against the end of OTA
 	int loggerFlags;
+	int safeModeTimeout;
 #if PLATFORM_W800 || PLATFORM_BK7252 || PLATFORM_BK7252N || PLATFORM_XR872
 	byte unusedSectorAB[51];
 #elif PLATFORM_ESPIDF

@@ -191,6 +191,9 @@ void CFG_SetDefaultConfig() {
 	
 	CFG_SetDefaultLEDCorrectionTable();
 
+	// Default safe mode timeout: 0 means disabled (no auto-reboot)
+	g_cfg.safeModeTimeout = CFG_DEFAULT_SAFE_MODE_TIMEOUT;
+
 #if MQTT_USE_TLS
 	CFG_SetMQTTUseTls(0);
 	CFG_SetMQTTVerifyTlsCert(0);
@@ -840,6 +843,18 @@ void CFG_SetDisableWebServer(byte value) {
 	}
 }
 #endif
+
+int CFG_GetSafeModeTimeout() {
+	return g_cfg.safeModeTimeout;
+}
+void CFG_SetSafeModeTimeout(int value) {
+	// is there a change?
+	if (g_cfg.safeModeTimeout != value) {
+		g_cfg.safeModeTimeout = value;
+		// mark as dirty (value has changed)
+		g_cfg_pendingChanges++;
+	}
+}
 
 void CFG_InitAndLoad() {
 	byte chkSum;

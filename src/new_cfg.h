@@ -109,5 +109,8 @@ byte CFG_GetDisableWebServer();
 void CFG_SetDisableWebServer(byte value);
 #endif
 
+int CFG_GetSafeModeTimeout();
+void CFG_SetSafeModeTimeout(int value);
+
 #endif
 

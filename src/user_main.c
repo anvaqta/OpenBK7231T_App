@@ -83,6 +83,8 @@ static int g_saveCfgAfter = 0;
 int g_startPingWatchDogAfter = 60;
 // many boots failed? do not run pins or anything risky
 int bSafeMode = 0;
+// safe mode timeout countdown (in seconds)
+static int g_safeModeTimeoutCountdown = -1;
 // not really <time>, but rather a loop count, but it doesn't really matter much
 // start disabled.
 int g_timeSinceLastPingReply = -1;
@@ -1027,6 +1029,16 @@ void Main_OnEverySecond()
 			Main_ForceUnsafeInit();
 		}
 	}
+	// Check safe mode timeout and reboot if needed
+	if (bSafeMode && g_safeModeTimeoutCountdown > 0) {
+		g_safeModeTimeoutCountdown--;
+		if (g_safeModeTimeoutCountdown <= 0) {
+			ADDLOGF_INFO("Safe mode timeout reached, rebooting device...\r\n");
+			RESET_ScheduleModuleReset(3);
+		} else {
+			ADDLOGF_INFO("Safe mode: rebooting in %i seconds...\r\n", g_safeModeTimeoutCountdown);
+		}
+	}
 	if (g_reset) {
 		g_reset--;
 		if (!g_reset) {
@@ -1493,6 +1505,14 @@ void Main_Init_After_Delay()
 	// we can log this after delay.
 	if (bSafeMode) {
 		ADDLOGF_INFO("###### safe mode activated - boot failures %d", g_bootFailures);
+		// initialize safe mode timeout countdown
+		int timeout = CFG_GetSafeModeTimeout();
+		if (timeout > 0) {
+			g_safeModeTimeoutCountdown = timeout;
+			ADDLOGF_INFO("Safe mode will reboot after %d seconds", timeout);
+		} else {
+			g_safeModeTimeoutCountdown = -1;
+		}
 	}
 #if ALLOW_SSID2
 	Init_WiFiSSIDactual_FromChannelIfSet();//Channel must be set in early.bat using CMD_setStartupSSIDChannel

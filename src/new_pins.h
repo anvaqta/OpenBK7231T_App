@@ -1365,7 +1365,7 @@ typedef struct cfgPowerMeasurementCalibration_s {
 #define CFG_DEFAULT_BTN_LONG	10
 #define CFG_DEFAULT_BTN_REPEAT	5
 // safe mode timeout in seconds (0 means disabled)
-#define CFG_DEFAULT_SAFE_MODE_TIMEOUT	0
+#define CFG_DEFAULT_SAFE_MODE_TIMEOUT	1800 //30 min
 
 enum {
 	CFG_OBK_VOLTAGE = 0,
